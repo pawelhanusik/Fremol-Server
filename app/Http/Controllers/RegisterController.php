@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
@@ -13,6 +14,7 @@ class RegisterController extends Controller
             'password' => 'required',
             'password2' => 'required|same:password'
         ]);
+        $validated['password'] = Hash::make($validated['password']);
         User::create($validated);
 
         return [
@@ -34,6 +36,7 @@ class RegisterController extends Controller
                 'userName' => auth()->user()->name
             ];
         } else {
+            abort(401, "Invalid credentials");
             return null;
         }
     }
@@ -41,5 +44,9 @@ class RegisterController extends Controller
         return [
             'message' => 'OK'
         ];
+    }
+    public function logout() {
+        request()->user()->tokens()->delete();
+        return null;
     }
 }
