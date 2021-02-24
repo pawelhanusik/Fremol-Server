@@ -60,4 +60,8 @@ class User extends Authenticatable
         }
         $this->conversations()->detach($conversation);
     }
+
+    public function messages() {
+        return $this->hasMany(Message::class);
+    }
 }

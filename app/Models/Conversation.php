@@ -10,6 +10,10 @@ class Conversation extends Model
     use HasFactory;
 
     public function users() {
-        $this->belongsToMany(User::class)->withTimestamps();
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    public function messages() {
+        return $this->hasMany(Message::class);
     }
 }

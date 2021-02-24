@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Conversation;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -25,12 +26,19 @@ class DatabaseSeeder extends Seeder
         $users = User::factory(10)->create();
         $conversations = Conversation::factory(3)->create();
 
-        
+        $users[] = $adminUser;
         foreach($conversations as $conversation) {
-            $adminUser->addToConversation($conversation);
             foreach($users as $user) {
                 $user->addToConversation($conversation);
             }
+        }
+        
+        //Add messages
+        for($i = 0; $i < 1000; ++$i) {
+            Message::factory()
+                ->for( User::all()->random() )
+                ->for( Conversation::all()->random() )
+                ->create();
         }
     }
 }

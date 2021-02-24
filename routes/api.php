@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -38,3 +39,7 @@ Route::middleware('auth:sanctum')->get('/user/conversations/{user}', [Conversati
 //Route::middleware('auth:sanctum')->put('/user/conversations/{user}', [ConversationController::class, 'update']);
 //Route::middleware('auth:sanctum')->delete('/user/conversations/{user}', [ConversationController::class, 'destroy']);
 
+// MESSAGES
+Route::middleware('auth:sanctum')->get('/conversations/{conversation}/messages', [MessageController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/conversations/{conversation}/messages/{message}', [MessageController::class, 'show']);
+Route::middleware('auth:sanctum')->post('/conversations/{conversation}/messages', [MessageController::class, 'store']);
