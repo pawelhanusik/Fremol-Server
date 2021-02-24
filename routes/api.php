@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -30,3 +31,10 @@ Route::middleware('auth:sanctum')->get('/users', [UserController::class, 'index'
 Route::middleware('auth:sanctum')->get('/users/{user}', [UserController::class, 'show']);
 Route::middleware('auth:sanctum')->put('/users/{user}', [UserController::class, 'update']);
 Route::middleware('auth:sanctum')->delete('/users/{user}', [UserController::class, 'destroy']);
+
+// CONVERSATIONS
+Route::middleware('auth:sanctum')->get('/user/conversations', [ConversationController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/user/conversations/{user}', [ConversationController::class, 'show']);
+//Route::middleware('auth:sanctum')->put('/user/conversations/{user}', [ConversationController::class, 'update']);
+//Route::middleware('auth:sanctum')->delete('/user/conversations/{user}', [ConversationController::class, 'destroy']);
+

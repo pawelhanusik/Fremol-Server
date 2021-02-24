@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -42,17 +43,17 @@ class UserController extends Controller
         $validated = request()->validate([
             'email' => 'required|email',
             'name' => 'required',
-            'password' => 'required',
             'oldPassword' => 'required'
         ]);
 
         if (
-            auth()->once([
-                'name' => request()->user()->name,
-                'password' => $validated['oldPassword']
-            ])
+            password_verify($validated['oldPassword'], request()->user()->password)
         ) {
             $user->update($validated);
+            if (request('password') !== null) {
+                $user->password = Hash::make(request('password'));
+                $user->save();
+            }
             return null;
         } else {
             abort(401, "Invalid credentials");

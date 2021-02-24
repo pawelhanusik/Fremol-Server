@@ -42,4 +42,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function conversations() {
+        return $this->belongsToMany(Conversation::class)->withTimestamps();
+    }
+
+    public function addToConversation($conversation) {
+        if(is_string($conversation)) {
+            $conversation = Conversation::whereName($conversation)->firstOrFail();
+        }
+        $this->conversations()->attach($conversation);
+    }
+    public function removeFromConversation($conversation) {
+        if(is_string($conversation)) {
+            $conversation = Conversation::whereName($conversation)->firstOrFail();
+        }
+        $this->conversations()->detach($conversation);
+    }
 }
