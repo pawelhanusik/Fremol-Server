@@ -1,14 +1,18 @@
 {
-    "name": "laravel/laravel",
+    "name": "pawelhanusik/fremol",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "The Fremol Messaging App Backend",
     "keywords": [
-        "framework",
-        "laravel"
+        "fremol",
+        "messaging",
+        "message",
+        "app",
+        "backend"
     ],
-    "license": "MIT",
+    "license": "GPL-3.0-or-later",
     "require": {
         "php": "^7.3|^8.0",
+        "beyondcode/laravel-websockets": "^2.0@beta",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",

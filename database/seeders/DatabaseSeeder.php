@@ -22,11 +22,16 @@ class DatabaseSeeder extends Seeder
             'email' => 'example@example.com',
             'name' => 'admin'
         ])->create();
+        $adminUser2 = User::factory([
+            'email' => 'example2@example.com',
+            'name' => 'admin2'
+        ])->create();
 
         $users = User::factory(10)->create();
         $conversations = Conversation::factory(3)->create();
 
         $users[] = $adminUser;
+        $users[] = $adminUser2;
         foreach($conversations as $conversation) {
             foreach($users as $user) {
                 $user->addToConversation($conversation);

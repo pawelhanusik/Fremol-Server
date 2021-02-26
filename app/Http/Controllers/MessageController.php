@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Http\Resources\MessageResource;
-use App\Models\Conversation;
 use App\Models\Message;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -52,7 +52,10 @@ class MessageController extends Controller
             ]);
             $data['user_id'] = request()->user()->id;
             $data['conversation_id'] = $conversationID;
-            Message::create($data);
+            $message = Message::create($data);
+            
+            //broadcast(new MessageSent(auth()->user(), $message));
+            broadcast(new MessageSent(auth()->user(), $message))->toOthers();
 
             return [
                 'message' => 'Message sent'
