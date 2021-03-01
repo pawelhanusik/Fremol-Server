@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Conversation;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
@@ -23,9 +24,26 @@ class ConversationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        $data = request()->validate([
+            'name' => 'required',
+            'participants' => 'array'
+        ]);
+        
+        $conversation = Conversation::create([
+            'name' => $data['name']
+        ]);
+        $participants = $data['participants'];
+        $participants[] = auth()->user()->id;
+        foreach($participants as $userID) {
+            User::findOrFail($userID)->addToConversation($conversation);
+        }
+        
+        return [
+            'message' => 'Conversation created',
+            'conversation' => $conversation
+        ];
     }
 
     /**

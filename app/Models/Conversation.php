@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Conversation extends Model
 {
     use HasFactory;
+    protected $fillable = ['name'];
 
     public function users() {
         return $this->belongsToMany(User::class)->withTimestamps();

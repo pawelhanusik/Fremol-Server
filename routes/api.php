@@ -42,7 +42,8 @@ Route::middleware('auth:sanctum')->delete('/users/{user}', [UserController::clas
 
 // CONVERSATIONS
 Route::middleware('auth:sanctum')->get('/user/conversations', [ConversationController::class, 'index']);
-Route::middleware('auth:sanctum')->get('/user/conversations/{user}', [ConversationController::class, 'show']);
+Route::middleware('auth:sanctum')->get('/user/conversations/{conversation}', [ConversationController::class, 'show']);
+Route::middleware('auth:sanctum')->post('/user/conversations', [ConversationController::class, 'store']);
 //Route::middleware('auth:sanctum')->put('/user/conversations/{user}', [ConversationController::class, 'update']);
 //Route::middleware('auth:sanctum')->delete('/user/conversations/{user}', [ConversationController::class, 'destroy']);
 
