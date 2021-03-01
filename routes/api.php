@@ -18,6 +18,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// SERVER STATUS
+Route::get('/status', function () {
+    return [
+        'running' => true
+    ];
+});
+
 // LOGIN / REGISTER
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [RegisterController::class, 'login']);
