@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ConversationResource;
 use App\Models\Conversation;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class ConversationController extends Controller
      */
     public function index()
     {
-        return auth()->user()->conversations;
+        return ConversationResource::collection( auth()->user()->conversations );
     }
 
     /**
@@ -42,7 +43,7 @@ class ConversationController extends Controller
         
         return [
             'message' => 'Conversation created',
-            'conversation' => $conversation
+            'conversation' => new ConversationResource($conversation)
         ];
     }
 
@@ -56,7 +57,7 @@ class ConversationController extends Controller
     {
         $this->authorize($conversation);
 
-        return $conversation;
+        return new ConversationResource($conversation);
     }
 
     /**
