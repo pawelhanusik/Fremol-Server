@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         ])->create();
 
         $users = User::factory(10)->create();
-        $conversations = Conversation::factory(3)->create();
+        $conversations = Conversation::factory(3)->for($adminUser, 'creator')->create();
 
         $users[] = $adminUser;
         $users[] = $adminUser2;

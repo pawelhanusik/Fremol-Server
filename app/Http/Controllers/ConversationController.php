@@ -33,7 +33,8 @@ class ConversationController extends Controller
         ]);
         
         $conversation = Conversation::create([
-            'name' => $data['name']
+            'name' => $data['name'],
+            'creator_id' => auth()->user()->id
         ]);
         $participants = $data['participants'];
         $participants[] = auth()->user()->id;

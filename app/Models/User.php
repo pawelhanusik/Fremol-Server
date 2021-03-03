@@ -43,6 +43,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function createdConversations() {
+        return $this->hasMany(Conversation::class);
+    }
 
     public function conversations() {
         return $this->belongsToMany(Conversation::class)->withTimestamps();

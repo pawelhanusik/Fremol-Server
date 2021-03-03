@@ -17,6 +17,8 @@ class ConversationResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'creator' => $this->creator->name,
+            'creator_id' => $this->creator_id,
             'users' => UserResource::collection($this->users),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
