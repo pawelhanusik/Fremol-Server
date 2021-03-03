@@ -27,6 +27,8 @@ class ConversationController extends Controller
      */
     public function store()
     {
+        $this->authorize(Conversation::class);
+
         $data = request()->validate([
             'name' => 'required',
             'participants' => 'array'
@@ -68,9 +70,12 @@ class ConversationController extends Controller
      * @param  \App\Models\Conversation  $conversation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Conversation $conversation)
+    public function update(Conversation $conversation)
     {
-        //
+        $this->authorize($conversation);
+
+        // TODO: implement conversation edition
+        abort(404, 'Not implemented yet.');
     }
 
     /**
@@ -81,6 +86,9 @@ class ConversationController extends Controller
      */
     public function destroy(Conversation $conversation)
     {
-        //
+        $this->authorize($conversation);
+
+        // TODO: implement conversation deletion
+        abort(404, 'Not implemented yet.');
     }
 }

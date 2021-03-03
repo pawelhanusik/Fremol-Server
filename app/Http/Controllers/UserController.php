@@ -15,6 +15,8 @@ class UserController extends Controller
      */
     public function index()
     {
+        $this->authorize(User::class);
+        
         return UserResource::collection( User::all() );
     }
 
@@ -26,6 +28,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $this->authorize(User::class);
+
         return new UserResource($user);
     }
 

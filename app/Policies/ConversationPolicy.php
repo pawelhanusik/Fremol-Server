@@ -11,17 +11,6 @@ class ConversationPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view any models.
-     *
-     * @param  \App\Models\User  $user
-     * @return mixed
-     */
-    public function viewAny(User $user)
-    {
-        //
-    }
-
-    /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
@@ -30,7 +19,7 @@ class ConversationPolicy
      */
     public function view(User $user, Conversation $conversation)
     {
-        //
+        return $user->conversations->contains($conversation);
     }
 
     /**
@@ -41,7 +30,7 @@ class ConversationPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +42,7 @@ class ConversationPolicy
      */
     public function update(User $user, Conversation $conversation)
     {
-        //
+        return $conversation->creator->is($user);
     }
 
     /**
@@ -65,30 +54,6 @@ class ConversationPolicy
      */
     public function delete(User $user, Conversation $conversation)
     {
-        //
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Conversation  $conversation
-     * @return mixed
-     */
-    public function restore(User $user, Conversation $conversation)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Conversation  $conversation
-     * @return mixed
-     */
-    public function forceDelete(User $user, Conversation $conversation)
-    {
-        //
+        return $conversation->creator->is($user);
     }
 }
