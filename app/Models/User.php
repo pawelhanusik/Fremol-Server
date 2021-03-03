@@ -55,7 +55,7 @@ class User extends Authenticatable
         if(is_string($conversation)) {
             $conversation = Conversation::whereName($conversation)->firstOrFail();
         }
-        $this->conversations()->attach($conversation);
+        $this->conversations()->sync($conversation, false);
     }
     public function removeFromConversation($conversation) {
         if(is_string($conversation)) {

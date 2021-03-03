@@ -40,9 +40,7 @@ class ConversationController extends Controller
         ]);
         $participants = $data['participants'];
         $participants[] = auth()->user()->id;
-        foreach($participants as $userID) {
-            User::findOrFail($userID)->addToConversation($conversation);
-        }
+        $conversation->users()->sync($participants);
         
         return [
             'message' => 'Conversation created',
@@ -74,8 +72,19 @@ class ConversationController extends Controller
     {
         $this->authorize($conversation);
 
-        // TODO: implement conversation edition
-        abort(404, 'Not implemented yet.');
+        $data = request()->validate([
+            'name' => 'required',
+            'participants' => 'array'
+        ]);
+        $conversation->update([
+            'name'=> $data['name']
+        ]);
+        
+        $participants = $data['participants'];
+        $participants[] = auth()->user()->id;
+        $conversation->users()->sync($participants);
+
+        return null;
     }
 
     /**
@@ -88,7 +97,22 @@ class ConversationController extends Controller
     {
         $this->authorize($conversation);
 
-        // TODO: implement conversation deletion
-        abort(404, 'Not implemented yet.');
+        $conversation->delete();
+        return null;
+    }
+
+    /**
+     * Leave the conversation
+     *
+     * @param  \App\Models\Conversation  $conversation
+     * @return \Illuminate\Http\Response
+     */
+    public function leave(Conversation $conversation) {
+        if (request()->user()->cannot('leave', $conversation)) {
+            abort(403, 'You cannot leave conversation you have created.');
+        }
+
+        request()->user()->removeFromConversation($conversation);
+        return null;
     }
 }

@@ -56,4 +56,16 @@ class ConversationPolicy
     {
         return $conversation->creator->is($user);
     }
+
+    /**
+     * Determine whether the user can leave the conversation.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Conversation  $conversation
+     * @return mixed
+     */
+    public function leave(User $user, Conversation $conversation)
+    {
+        return $conversation->creator->isNot($user);
+    }
 }

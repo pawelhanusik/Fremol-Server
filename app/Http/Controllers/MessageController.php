@@ -91,6 +91,8 @@ class MessageController extends Controller
 
     public function update(Conversation $conversation, Message $message)
     {
+        // Messages cannot be edited
+
         /*$this->authorize('view', $conversation);
         $this->authorize($message);*/
 
@@ -99,10 +101,11 @@ class MessageController extends Controller
 
     public function destroy(Conversation $conversation, Message $message)
     {
-        $this->authorize('view', $conversation);
-        $this->authorize($message);
+        // Messages cannot be deleted
+        
+        /*$this->authorize('view', $conversation);
+        $this->authorize($message);*/
 
-        // TODO: implement message deletion
-        abort(404, 'Not implemented yet.');
+        abort(404, 'Not found');
     }
 }

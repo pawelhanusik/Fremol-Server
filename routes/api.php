@@ -46,10 +46,11 @@ Route::middleware('auth:sanctum')->get('/user/conversations/{conversation}', [Co
 Route::middleware('auth:sanctum')->post('/user/conversations', [ConversationController::class, 'store']);
 Route::middleware('auth:sanctum')->put('/user/conversations/{conversation}', [ConversationController::class, 'update']);
 Route::middleware('auth:sanctum')->delete('/user/conversations/{conversation}', [ConversationController::class, 'destroy']);
+Route::middleware('auth:sanctum')->delete('/user/conversations/{conversation}/leave', [ConversationController::class, 'leave']);
 
 // MESSAGES
 Route::middleware('auth:sanctum')->get('/conversations/{conversation}/messages', [MessageController::class, 'index']);
 Route::middleware('auth:sanctum')->get('/conversations/{conversation}/messages/{message}', [MessageController::class, 'show']);
 Route::middleware('auth:sanctum')->post('/conversations/{conversation}/messages', [MessageController::class, 'store']);
 //Route::middleware('auth:sanctum')->put('/conversations/{conversation}/messages/{message}', [MessageController::class, 'update']);
-Route::middleware('auth:sanctum')->delete('/conversations/{conversation}/messages/{message}', [MessageController::class, 'destroy']);
+//Route::middleware('auth:sanctum')->delete('/conversations/{conversation}/messages/{message}', [MessageController::class, 'destroy']);
