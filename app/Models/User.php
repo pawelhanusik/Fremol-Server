@@ -44,7 +44,7 @@ class User extends Authenticatable
     ];
 
     public function createdConversations() {
-        return $this->hasMany(Conversation::class);
+        return $this->hasMany(Conversation::class, 'creator_id');
     }
 
     public function conversations() {
