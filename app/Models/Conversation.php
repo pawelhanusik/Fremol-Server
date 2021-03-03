@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Conversation extends Model
 {
     use HasFactory;
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'creator_id'];
 
     public function creator() {
         return $this->belongsTo(User::class);
