@@ -7,6 +7,7 @@ use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller
 {
@@ -66,13 +67,32 @@ class MessageController extends Controller
         $this->authorize('view', $conversation);
         $this->authorize(Message::class);
 
-        $data = request()->validate([
-            'text' => 'required'
-        ]);
-        $data['user_id'] = request()->user()->id;
-        $data['conversation_id'] = $conversation;
-        $message = Message::create($data);
-        
+        $data = [];
+        $message = null;
+        if (request()->has('text')) {
+            $data = request()->validate([
+                'text' => 'required'
+            ]);
+            $data['user_id'] = request()->user()->id;
+            $data['conversation_id'] = $conversation->id;
+            $message = Message::create($data);
+        } else {
+            $data = request()->validate([
+                'image' => 'required|image'
+            ]);
+            $path = request()->file('image')->store('public/images');
+            $message = Message::create([
+                'image_url' => Storage::url($path),
+                'user_id' => request()->user()->id,
+                'conversation_id' => $conversation->id
+            ]);
+        }
+
+        if ($message === null) {
+            abort(422, "The given data was invalid.");
+            return null;
+        }
+
         //broadcast(new MessageSent($message));
         broadcast(new MessageSent($message))->toOthers();
 
