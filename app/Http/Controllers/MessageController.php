@@ -7,7 +7,8 @@ use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
+use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class MessageController extends Controller
 {
@@ -84,6 +85,25 @@ class MessageController extends Controller
             
             $path = request()->file('media')->store('public/media/' . $mime);
             $thumbnail = null;
+
+            if (strpos($mime, "video") == 0) {
+                // is a video - generate thumbnail
+                $ffprobe = FFProbe::create();
+                $videoLen = $ffprobe->format(request()->file('media'))->get('duration');
+                $videoLen = explode(".", $videoLen)[0];
+
+                $thumbnailPath = $path . '.thumbnail.png';
+                FFMpeg::open($path)
+                    ->getFrameFromSeconds(
+                        rand(0, min($videoLen / 10, 60))
+                    )
+                    ->export()
+                    ->save($thumbnailPath);
+                
+                $thumbnail = $thumbnailPath;
+            }
+
+            
 
             $message = Message::create([
                 'attachment_mime' => $mime,
