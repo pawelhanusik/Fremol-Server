@@ -77,15 +77,24 @@ class MessageController extends Controller
             $data['conversation_id'] = $conversation->id;
             $message = Message::create($data);
         } else {
-            $data = request()->validate([
-                'image' => 'required|image'
+            $mime = request()->file('media')->getClientMimeType();
+            request()->validate([
+                'media' => 'required|mimetypes:' . $mime
             ]);
-            $path = request()->file('image')->store('public/images');
+            
+            $path = request()->file('media')->store('public/media/' . $mime);
+            $thumbnail = null;
+
             $message = Message::create([
-                'image_url' => Storage::url($path),
+                'attachment_mime' => $mime,
+                'attachment_url' => $path,
+                'attachment_thumbnail' => $thumbnail,
+                
                 'user_id' => request()->user()->id,
                 'conversation_id' => $conversation->id
             ]);
+
+            
         }
 
         if ($message === null) {

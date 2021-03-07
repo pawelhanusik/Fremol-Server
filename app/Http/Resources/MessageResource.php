@@ -16,8 +16,12 @@ class MessageResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            
             'text' => $this->text,
-            'image_url' => $this->image_url,
+            'attachment_mime' => $this->attachment_mime,
+            'attachment_url' => $this->attachment_url,
+            'attachment_thumbnail' => $this->attachment_thumbnail,
+            
             'user_id' => $this->user_id,
             'user' => $this->user->name,
             'conversation_id' => $this->conversation_id,

@@ -17,7 +17,9 @@ class CreateMessagesTable extends Migration
             $table->id();
 
             $table->text('text')->nullable();
-            $table->string('image_url')->nullable();
+            $table->string('attachment_mime')->nullable();
+            $table->string('attachment_url')->nullable();
+            $table->string('attachment_thumbnail')->nullable();
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('conversation_id');
