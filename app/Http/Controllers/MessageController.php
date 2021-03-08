@@ -7,6 +7,9 @@ use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use ProtoneMedia\LaravelFFMpeg\Exporters\EncodingException;
 use ProtoneMedia\LaravelFFMpeg\FFMpeg\FFProbe;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
@@ -78,32 +81,60 @@ class MessageController extends Controller
             $data['conversation_id'] = $conversation->id;
             $message = Message::create($data);
         } else {
-            $mime = request()->file('media')->getClientMimeType();
-            request()->validate([
-                'media' => 'required|mimetypes:' . $mime
-            ]);
-            
-            $path = request()->file('media')->store('public/media/' . $mime);
+            $isMedia = request()->has('isMedia') ? request('isMedia') : false;
+            $storePath = 'public/';
+            if ($isMedia) {
+                // media
+                $storePath .= 'media/';
+                $mime = request()->file('attachment')->getClientMimeType();
+                $storePath .= explode('/', $mime)[0];
+                
+                request()->validate([
+                    'attachment' => 'required|mimetypes:' . $mime
+                ]);
+            } else {
+                // attachment
+                $storePath .= 'attachments/';
+                $mime = 'other';
+            }
+            $path = request()->file('attachment')->store($storePath);
             $thumbnail = null;
 
-            if (strpos($mime, "video") == 0) {
-                // is a video - generate thumbnail
-                $ffprobe = FFProbe::create();
-                $videoLen = $ffprobe->format(request()->file('media'))->get('duration');
-                $videoLen = explode(".", $videoLen)[0];
+            if ($isMedia) {
+                if (strpos($mime, "video") == 0) {
+                    // VIDEO
 
-                $thumbnailPath = $path . '.thumbnail.png';
-                FFMpeg::open($path)
-                    ->getFrameFromSeconds(
-                        rand(0, min($videoLen / 10, 60))
-                    )
-                    ->export()
-                    ->save($thumbnailPath);
-                
-                $thumbnail = $thumbnailPath;
+                    // generate thumbnail
+                    $ffprobe = FFProbe::create();
+                    $videoLen = $ffprobe->format(request()->file('attachment'))->get('duration');
+                    $videoLen = explode(".", $videoLen)[0];
+                    
+                    $thumbnailPath = $path . '.thumbnail.png';
+                    FFMpeg::open($path)
+                        ->getFrameFromSeconds(
+                            rand(0, min($videoLen / 10, 60))
+                        )
+                        ->export()
+                        ->save($thumbnailPath);
+                    
+                    $thumbnail = $thumbnailPath;
+
+                    // convert video to mp4
+                    $pathConverted = substr($path, 0, strrpos($path, '.')) . '.mp4';
+                    try {
+                        FFMpeg::open($path)
+                            ->export()
+                            ->inFormat(new \FFMpeg\Format\Video\X264('aac'))
+                            ->save($pathConverted);
+                    } catch (EncodingException) {
+                        Log::error('MessageController::store(): Error converting video.');
+                        abort(500, "There was an error while processing your video. Please try againg leater");
+                        return null;
+                    }
+                    Storage::delete($path);
+                    $path = $pathConverted;
+                }
             }
-
-            
 
             $message = Message::create([
                 'attachment_mime' => $mime,
@@ -113,8 +144,6 @@ class MessageController extends Controller
                 'user_id' => request()->user()->id,
                 'conversation_id' => $conversation->id
             ]);
-
-            
         }
 
         if ($message === null) {
