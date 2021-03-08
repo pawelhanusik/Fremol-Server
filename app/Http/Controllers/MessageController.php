@@ -81,14 +81,13 @@ class MessageController extends Controller
             $data['conversation_id'] = $conversation->id;
             $message = Message::create($data);
         } else {
-            $isMedia = request()->has('isMedia') ? request('isMedia') : false;
+            $isMedia = request()->has('isMedia') && request('isMedia') == "true" ? true : false;
             $storePath = 'public/';
             if ($isMedia) {
                 // media
                 $storePath .= 'media/';
                 $mime = request()->file('attachment')->getClientMimeType();
                 $storePath .= explode('/', $mime)[0];
-                
                 request()->validate([
                     'attachment' => 'required|mimetypes:' . $mime
                 ]);
@@ -101,7 +100,7 @@ class MessageController extends Controller
             $thumbnail = null;
 
             if ($isMedia) {
-                if (strpos($mime, "video") == 0) {
+                if (strpos($mime, "video") === 0) {
                     // VIDEO
 
                     // generate thumbnail
@@ -110,13 +109,18 @@ class MessageController extends Controller
                     $videoLen = explode(".", $videoLen)[0];
                     
                     $thumbnailPath = $path . '.thumbnail.png';
-                    FFMpeg::open($path)
-                        ->getFrameFromSeconds(
-                            rand(0, min($videoLen / 10, 60))
-                        )
-                        ->export()
-                        ->save($thumbnailPath);
-                    
+                    try {
+                        FFMpeg::open($path)
+                            ->getFrameFromSeconds(
+                                rand(0, min($videoLen / 10, 60))
+                            )
+                            ->export()
+                            ->save($thumbnailPath);
+                    } catch (EncodingException) {
+                        Log::error('MessageController::store(): Error generating thumbnail of a video.');
+                        abort(500, "There was an error while processing your video. Please try againg leater");
+                        return null;
+                    }
                     $thumbnail = $thumbnailPath;
 
                     // convert video to mp4
