@@ -7,6 +7,7 @@ use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
 use Carbon\Carbon;
+use FFMpeg\Coordinate\Dimension;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Exporters\EncodingException;
@@ -112,10 +113,12 @@ class MessageController extends Controller
                     try {
                         FFMpeg::open($path)
                             ->getFrameFromSeconds(
-                                rand(0, min($videoLen / 10, 60))
+                                rand(0, min($videoLen / 10, 60) + 1)
                             )
                             ->export()
-                            ->save($thumbnailPath);
+                            ->addFilter(function ($filters) {
+                                $filters->custom('[in]scale=500:280 [out]');
+                            })->save($thumbnailPath);
                     } catch (EncodingException) {
                         Log::error('MessageController::store(): Error generating thumbnail of a video.');
                         abort(500, "There was an error while processing your video. Please try againg leater");
