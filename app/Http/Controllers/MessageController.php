@@ -119,7 +119,7 @@ class MessageController extends Controller
                             ->addFilter(function ($filters) {
                                 $filters->custom('[in]scale=500:280 [out]');
                             })->save($thumbnailPath);
-                    } catch (EncodingException) {
+                    } catch (EncodingException $e) {
                         Log::error('MessageController::store(): Error generating thumbnail of a video.');
                         abort(500, "There was an error while processing your video. Please try againg leater");
                         return null;
@@ -133,7 +133,7 @@ class MessageController extends Controller
                             ->export()
                             ->inFormat(new \FFMpeg\Format\Video\X264('aac'))
                             ->save($pathConverted);
-                    } catch (EncodingException) {
+                    } catch (EncodingException $e) {
                         Log::error('MessageController::store(): Error converting video.');
                         abort(500, "There was an error while processing your video. Please try againg leater");
                         return null;

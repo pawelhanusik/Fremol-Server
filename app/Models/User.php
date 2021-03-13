@@ -6,7 +6,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
+use League\Flysystem\FileNotFoundException;
 
 class User extends Authenticatable
 {
@@ -66,5 +68,21 @@ class User extends Authenticatable
 
     public function messages() {
         return $this->hasMany(Message::class);
+    }
+
+    public function totalAttachmentsCount() {
+        return $this->messages()->whereNotNull('attachment_url')->count();
+    }
+    public function totalAttachmentsSize() {
+        $ret = 0;
+        $attachments = $this->messages()->whereNotNull('attachment_url')->pluck('attachment_url')->all();
+        foreach ($attachments as $attachment_path) {
+            try {
+                $ret += Storage::size($attachment_path);
+            } catch (FileNotFoundException $e) {
+
+            }
+        }
+        return $ret;
     }
 }
