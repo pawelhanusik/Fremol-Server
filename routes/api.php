@@ -37,7 +37,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::middleware('auth:sanctum')->get('/users', [UserController::class, 'index']);
 Route::middleware('auth:sanctum')->get('/users/{user}', [UserController::class, 'show']);
-Route::middleware('auth:sanctum')->put('/users/{user}', [UserController::class, 'update']);
+Route::middleware('auth:sanctum')->post('/users/{user}/update', [UserController::class, 'update']);
 Route::middleware('auth:sanctum')->delete('/users/{user}', [UserController::class, 'destroy']);
 
 // CONVERSATIONS

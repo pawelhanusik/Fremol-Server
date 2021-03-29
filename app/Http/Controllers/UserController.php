@@ -54,6 +54,15 @@ class UserController extends Controller
             password_verify($validated['oldPassword'], request()->user()->password)
         ) {
             $user->update($validated);
+            if (request()->has('avatar')) {
+                request()->validate([
+                    'avatar' => 'required|image|mimetypes:image/png,image/jpeg|max:2048'
+                ]);
+                $avatar_url = request()->file('avatar')->store('public/avatars');
+                $user->avatar_url = $avatar_url;
+                $user->save();
+            }
+            
             if (request('password') !== null) {
                 $user->password = Hash::make(request('password'));
                 $user->save();

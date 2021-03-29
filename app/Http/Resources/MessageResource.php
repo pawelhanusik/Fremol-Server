@@ -24,6 +24,8 @@ class MessageResource extends JsonResource
             
             'user_id' => $this->user_id,
             'user' => $this->user->name,
+            'user_avatar_url' => $this->user->avatar_url,
+
             'conversation_id' => $this->conversation_id,
             'conversation' => $this->conversation->name,
             'created_at' => $this->created_at,
