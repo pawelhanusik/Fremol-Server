@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -58,7 +59,11 @@ class UserController extends Controller
                 request()->validate([
                     'avatar' => 'required|image|mimetypes:image/png,image/jpeg|max:2048'
                 ]);
-                $avatar_url = request()->file('avatar')->store('public/avatars');
+                $avatarDstPath = $user->id;
+                if (Storage::exists($avatarDstPath)) {
+                    Storage::delete($avatarDstPath);
+                }
+                $avatar_url = request()->file('avatar')->storeAs('public/avatars', $avatarDstPath);
                 $user->avatar_url = $avatar_url;
                 $user->save();
             }
