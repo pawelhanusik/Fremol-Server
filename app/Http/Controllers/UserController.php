@@ -29,7 +29,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $this->authorize(User::class);
+        $this->authorize($user);
 
         return new UserResource($user);
     }

@@ -80,7 +80,7 @@ class ConversationController extends Controller
             'name'=> $data['name']
         ]);
         
-        $participants = $data['participants'];
+        $participants = $data['participants'] ?? [];
         $participants[] = auth()->user()->id;
         $conversation->users()->sync($participants);
 
@@ -108,9 +108,7 @@ class ConversationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function leave(Conversation $conversation) {
-        if (request()->user()->cannot('leave', $conversation)) {
-            abort(403, 'You cannot leave conversation you have created.');
-        }
+        $this->authorize($conversation);
 
         request()->user()->removeFromConversation($conversation);
         return null;
