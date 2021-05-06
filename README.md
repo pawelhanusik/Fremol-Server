@@ -1,62 +1,147 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+<p align="center"><a href="http://pawel.hanusik.pl/fremol" target="_blank"><img src="public/logo.svg" width="170"></a></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Fremol (backend)
 
-## About Laravel
+Messaging app with backend you host yourself.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# Installation
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Clone repository:
 
-## Learning Laravel
+```
+git clone https://github.com/pawelhanusik/Fremol-Server.git
+cd Fremol-Server
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Install php dependencies:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
+composer install
+```
 
-## Laravel Sponsors
+Create default config file:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```
+cp .env.example .env
+```
 
-### Premium Partners
+Generate app key:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
+```
+php artisan key:generate
+```
 
-## Contributing
+Configure database:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- setup for MySQL
 
-## Code of Conduct
+    - install and enable mysql php extension
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    - in .env file: 
+        ```
+        DB_CONNECTION=mysql
+        DB_HOST=<database_host>
+        DB_PORT=<database_port>
+        DB_DATABASE=<database_name>
+        DB_USERNAME=<database_username>
+        DB_PASSWORD=<database_password>
+        ```
 
-## Security Vulnerabilities
+- setup for SQLite
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    - install and enable sqlite php extension.
 
-## License
+    - in .env:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+        ```
+        DB_CONNECTION=sqlite
+        ```
+
+        and REMOVE all other vars prefixed with DB_
+
+    - create db file:
+        
+        ```
+        touch database/database.sqlite
+        ```
+
+Configure WebSockets:
+
+In .env:
+
+```
+PUSHER_APP_HOST=<hostname>
+PUSHER_APP_PORT=<websockets_port>
+PUSHER_APP_SECRET=<some_secret_key>
+```
+
+*PUSHER_APP_SECRET should be any random alphanumeric string.  
+The hostname have to be reachable by the users.*
+
+*Note: If you want to change PUSHER_APP_CLUSTER or PUSHER_APP_KEY, make sure to update these settings in frontent app as well.*
+
+Generate database:
+
+```
+php artisan migrate
+```
+
+Make storage publicly available:
+
+```
+php artisan storage:link
+```
+
+# SSL
+
+Fremol is designed to support only encrypted traffic, thats why you have to get certificates. If you don't have one yet, I recommend using [Let's Encrypt](https://letsencrypt.org/)
+
+In .env set following variables to match your needs:
+
+```
+LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT=null
+LARAVEL_WEBSOCKETS_SSL_CA=null
+LARAVEL_WEBSOCKETS_SSL_LOCAL_PK=null
+LARAVEL_WEBSOCKETS_SSL_PASSPHRASE=null
+```
+
+Example for Let's Encrypt certificates:
+
+```
+LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT=/etc/letsencrypt/live/<domain>/fullchain.pem
+LARAVEL_WEBSOCKETS_SSL_CA=null
+LARAVEL_WEBSOCKETS_SSL_LOCAL_PK=/etc/letsencrypt/live/<domain>/privkey.pem
+LARAVEL_WEBSOCKETS_SSL_PASSPHRASE=null
+```
+
+# Running
+
+Just host `public` directory as a root directory in your domain.
+
+And then for the WebSockets part, you have to use the artisan command:
+
+```
+php artisan websockets:serve --port <websockets_port>
+```
+
+# Testing
+
+```
+php artisan test
+```
+
+# Clearing database
+
+```
+php artisan migrate:fresh
+```
+
+# Production
+
+In .env:
+
+```
+APP_ENV=production
+APP_DEBUG=false
+```
