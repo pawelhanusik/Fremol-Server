@@ -127,7 +127,7 @@ class MessageController extends Controller
                     $thumbnail = $thumbnailPath;
 
                     // convert video to mp4
-                    $pathConverted = substr($path, 0, strrpos($path, '.')) . '.mp4';
+                    $pathConverted = substr($path, 0, strrpos($path, '.')) . '_fc.mp4';
                     try {
                         FFMpeg::open($path)
                             ->export()
